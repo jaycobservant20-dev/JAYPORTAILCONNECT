@@ -1,0 +1,367 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail JayConnectt</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Plus Jakarta+Sans', sans-serif;
+        }
+        /* Effet captcha bizarre / distordu lisible humain sur fond clair */
+        .captcha-box {
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 5px;
+            font-weight: bold;
+            font-style: oblique;
+            text-decoration: line-through;
+            color: #1e293b;
+            background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container Principal (Clean Light/White Theme) -->
+    <div class="w-full max-w-md bg-white border border-slate-200/80 rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden text-slate-800 relative transition-all duration-300">
+        
+        <!-- ================= PAGE 1 : CONNEXION ================= -->
+        <div id="loginPage" class="p-8">
+            <!-- Logo & En-tête -->
+            <div class="flex flex-col items-center mb-6">
+                <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 mb-3 text-white">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0115.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900">Portail JayConnectt</h1>
+                <p class="text-xs text-slate-500 mt-1">Connectez-vous à votre espace sécurisé</p>
+            </div>
+
+            <!-- Message d'erreur Connexion -->
+            <div id="loginError" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 text-center font-medium">
+                Code de sécurité ou mot de passe incorrect.
+            </div>
+
+            <!-- Formulaire de Connexion -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Code de sécurité</label>
+                    <input type="password" id="loginSecurityCode" required placeholder="••••••••" 
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 text-slate-800 placeholder-slate-400 text-sm transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Mot de passe</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" 
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 text-slate-800 placeholder-slate-400 text-sm transition">
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 font-semibold text-white rounded-xl shadow-lg shadow-blue-600/20 transition duration-200 text-sm mt-2">
+                    Connexion
+                </button>
+            </form>
+
+            <!-- Bascule vers activation et Aide -->
+            <div class="mt-6 text-center border-t border-slate-100 pt-5 space-y-3">
+                <p class="text-xs text-slate-500">Vous n'avez pas encore activé votre compte.</p>
+                <button onclick="switchPage('activation')" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">
+                    Activer mon compte
+                </button>
+                <div>
+                    <a href="#" onclick="openMailClient(event)" class="text-[11px] text-blue-600 hover:text-blue-700 font-medium hover:underline">
+                        Besoin d'aide ? / Demander un code
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ================= PAGE 2 : ACTIVATION ================= -->
+        <div id="activationPage" class="p-8 hidden">
+            <!-- Flèche de retour -->
+            <button onclick="switchPage('login')" class="absolute top-4 left-4 p-2.5 bg-slate-100 hover:bg-slate-200 rounded-full transition text-slate-600 hover:text-slate-900 shadow-sm" title="Retour à la connexion">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+
+            <!-- En-tête -->
+            <div class="flex flex-col items-center mb-4 mt-2">
+                <h1 class="text-lg font-bold tracking-tight text-slate-900">Portail JayConnectt</h1>
+                <p class="text-xs text-slate-500 mt-0.5 text-center">Activation du compte</p>
+            </div>
+
+            <!-- Message d'erreur exigé -->
+            <div id="activationError" class="hidden mb-3 p-3 bg-red-50 border border-red-200 rounded-xl text-[11px] text-red-600 text-center font-medium leading-relaxed">
+                Désolé, les informations d'activation ne sont pas correctes. Veuillez entrer parfaitement les informations que vous avez reçues dans l'email.
+            </div>
+
+            <!-- Formulaire d'Activation (5 champs requis) -->
+            <form id="activationForm" onsubmit="handleActivation(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">1. Code de sécurité</label>
+                    <input type="text" id="actSecCode" required placeholder="Ex: Ca6279" 
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">2. Mot de passe</label>
+                    <input type="password" id="actPass" required placeholder="Mot de passe" 
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">3. Profil</label>
+                    <input type="text" id="actProfile" required placeholder="Profil" 
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">4. Code d'activation</label>
+                    <input type="text" id="actCodeAct" required placeholder="Code d'activation" 
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">5. Captcha (Vérification humaine)</label>
+                    <div class="border border-slate-200 p-2.5 rounded-xl text-center mb-1.5">
+                        <span class="captcha-box text-sm select-none inline-block">Ja728najndm</span>
+                    </div>
+                    <input type="text" id="actCaptcha" required placeholder="Entrez le texte ci-dessus" 
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:outline-none transition">
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 font-semibold text-white rounded-xl shadow-lg shadow-blue-600/20 transition text-xs mt-2">
+                    Suivant / Activer
+                </button>
+            </form>
+
+            <!-- Aide & Mailto -->
+            <div class="mt-4 p-3 bg-slate-50 border border-slate-200/60 rounded-xl text-center">
+                <p class="text-[10px] text-slate-500 mb-1.5">Si vous n'avez pas demandé un code d'activation :</p>
+                <a href="#" onclick="openMailClient(event)" class="inline-block px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium text-[11px] rounded-lg transition">
+                    Envoyer un e-mail d'assistance
+                </a>
+            </div>
+        </div>
+
+
+        <!-- ================= PAGE 3 : POST-ACTIVATION & OUTIL CALCULATRICE ================= -->
+        <div id="postActivationPage" class="p-8 hidden">
+            <!-- Flèche de retour -->
+            <button onclick="switchPage('activation')" class="absolute top-4 left-4 p-2.5 bg-slate-100 hover:bg-slate-200 rounded-full transition text-slate-600 hover:text-slate-900 shadow-sm" title="Retour">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+
+            <!-- Logo et Titre -->
+            <div class="flex flex-col items-center mb-6 mt-2">
+                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 mb-2 text-white">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h2 class="text-base font-bold tracking-tight text-slate-900">Portail JayConnectt</h2>
+                <p class="text-xs text-slate-500">Bibliothèque d'outils</p>
+            </div>
+
+            <!-- Zone ACTIVER AVEC UN CODE -->
+            <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl text-center mb-4">
+                <p class="text-xs font-bold text-slate-700 mb-2.5">ACTIVER AVEC UN CODE</p>
+                
+                <div id="toolError" class="hidden mb-2 p-2 bg-red-50 border border-red-200 rounded-xl text-[11px] text-red-600 font-medium">
+                    PAS BON OU OUTIL PAS DISPONIBLE
+                </div>
+
+                <div class="flex gap-2">
+                    <input type="text" id="toolCodeInput" placeholder="Ex: CALCUL64" 
+                        class="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600">
+                    <button onclick="activateTool()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl shadow transition">
+                        Activer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bibliothèque / Outil Calculatrice (Affiché si CALCUL64 est activé) -->
+            <div id="calculatorSection" class="hidden border border-slate-200 bg-white p-4 rounded-2xl shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs font-bold text-slate-700">CALCULATRICE FONCTIONNELLE</span>
+                    <span class="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Actif
+                    </span>
+                </div>
+
+                <!-- Écran de la calculatrice -->
+                <div id="calcScreen" class="w-full bg-slate-900 text-white border border-slate-800 rounded-xl p-3 text-right text-xl font-mono mb-3 h-12 flex items-center justify-end overflow-hidden shadow-inner">
+                    0
+                </div>
+
+                <!-- Clavier de la calculatrice -->
+                <div class="grid grid-cols-4 gap-1.5">
+                    <button onclick="calcClear()" class="p-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold border border-red-200 transition">C</button>
+                    <button onclick="calcAppend('/')" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition">÷</button>
+                    <button onclick="calcAppend('*')" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition">×</button>
+                    <button onclick="calcBack()" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition">⌫</button>
+
+                    <button onclick="calcAppend('7')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">7</button>
+                    <button onclick="calcAppend('8')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">8</button>
+                    <button onclick="calcAppend('9')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">9</button>
+                    <button onclick="calcAppend('-')" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition">-</button>
+
+                    <button onclick="calcAppend('4')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">4</button>
+                    <button onclick="calcAppend('5')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">5</button>
+                    <button onclick="calcAppend('6')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">6</button>
+                    <button onclick="calcAppend('+')" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition">+</button>
+
+                    <button onclick="calcAppend('1')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">1</button>
+                    <button onclick="calcAppend('2')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">2</button>
+                    <button onclick="calcAppend('3')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">3</button>
+                    <button onclick="calcCalculate()" class="row-span-2 p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-600/20 flex items-center justify-center transition">=</button>
+
+                    <button onclick="calcAppend('0')" class="col-span-2 p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">0</button>
+                    <button onclick="calcAppend('.')" class="p-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">.</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script de logique -->
+    <script>
+        let toolAlreadyActivated = false;
+
+        function switchPage(pageId) {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('activationPage').classList.add('hidden');
+            document.getElementById('postActivationPage').classList.add('hidden');
+
+            if (pageId === 'login') {
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('loginForm').reset();
+                document.getElementById('loginError').classList.add('hidden');
+            } else if (pageId === 'activation') {
+                document.getElementById('activationPage').classList.remove('hidden');
+                document.getElementById('activationForm').reset();
+                document.getElementById('activationError').classList.add('hidden');
+            } else if (pageId === 'postActivation') {
+                document.getElementById('postActivationPage').classList.remove('hidden');
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const code = document.getElementById('loginSecurityCode').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+
+            if (code === "Ca6279" && pass === "Activation072026gsj") {
+                switchPage('postActivation');
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function handleActivation(event) {
+            event.preventDefault();
+
+            const secCode = document.getElementById('actSecCode').value.trim();
+            const pass = document.getElementById('actPass').value.trim();
+            const profile = document.getElementById('actProfile').value.trim();
+            const actCode = document.getElementById('actCodeAct').value.trim();
+            const captcha = document.getElementById('actCaptcha').value.trim();
+
+            if (
+                secCode === "Ca6279" &&
+                pass === "Activation072026gsj" &&
+                profile === "Utilisateur64" &&
+                actCode === "Activ1820292343" &&
+                captcha === "Ja728najndm"
+            ) {
+                document.getElementById('activationError').classList.add('hidden');
+                switchPage('postActivation');
+            } else {
+                document.getElementById('activationError').classList.remove('hidden');
+            }
+        }
+
+        function openMailClient(event) {
+            event.preventDefault();
+            const subject = encodeURIComponent("Demande de code d'activation");
+            const body = encodeURIComponent(
+                "Salut,\n\nSi vous lisez ça, c'est que vous devez répondre à tous ces champs avant d'envoyer cet email.\n\n" +
+                "Prénom :\n" +
+                "Nom :\n" +
+                "Âge :"
+            );
+            window.location.href = `mailto:support@jayconnectt.com?subject=${subject}&body=${body}`;
+        }
+
+        function activateTool() {
+            const inputVal = document.getElementById('toolCodeInput').value.trim();
+            const errorDiv = document.getElementById('toolError');
+            const calcSection = document.getElementById('calculatorSection');
+
+            if (toolAlreadyActivated) {
+                errorDiv.textContent = "PAS BON OU OUTIL DÉJÀ ACTIVÉ / NON DISPONIBLE";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (inputVal === "CALCUL64") {
+                errorDiv.classList.add('hidden');
+                calcSection.classList.remove('hidden');
+                document.getElementById('toolCodeInput').disabled = true;
+                toolAlreadyActivated = true;
+            } else {
+                errorDiv.textContent = "PAS BON OU OUTIL PAS DISPONIBLE";
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        let calcDisplayValue = "0";
+
+        function updateCalcScreen() {
+            document.getElementById('calcScreen').textContent = calcDisplayValue;
+        }
+
+        function calcAppend(val) {
+            if (calcDisplayValue === "0" && val !== '.') {
+                calcDisplayValue = val;
+            } else {
+                calcDisplayValue += val;
+            }
+            updateCalcScreen();
+        }
+
+        function calcClear() {
+            calcDisplayValue = "0";
+            updateCalcScreen();
+        }
+
+        function calcBack() {
+            if (calcDisplayValue.length > 1) {
+                calcDisplayValue = calcDisplayValue.slice(0, -1);
+            } else {
+                calcDisplayValue = "0";
+            }
+            updateCalcScreen();
+        }
+
+        function calcCalculate() {
+            try {
+                let result = eval(calcDisplayValue.replace(/÷/g, '/').replace(/×/g, '*'));
+                calcDisplayValue = String(result);
+            } catch (error) {
+                calcDisplayValue = "Erreur";
+            }
+            updateCalcScreen();
+        }
+    </script>
+</body>
+</html>
+```
